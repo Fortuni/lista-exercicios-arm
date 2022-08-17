@@ -21,30 +21,31 @@
 //Utilize os pinos PB3, PB4 e PB5 para entrada do código. Podem ser
 //utilizados botões, chaves ou mesmo jumpers.
 
+
 void tempo (void) {
 if(aux == 0) {//utiliza o valor da variavel para definir o a frequencia; SEMPRE ACESO FUNCIONAMENTO OK
 TIM10->PSC=1;
 TIM10->ARR=1;
 }
 if(aux == 1) {//utiliza o valor da variavel para definir o a frequencia;//FALHA NA COMUNICAÇÃO
-TIM10->PSC=9999;
-TIM10->ARR=113;
+TIM10->PSC=7999;
+TIM10->ARR=999;
 }
 if(aux == 2) {//utiliza o valor da variavel para definir o a frequencia;ENTRADAS DIGITAIS ABERTAS
-TIM10->PSC=9999;
-TIM10->ARR=113;
+TIM10->PSC=999;
+TIM10->ARR=3999;
 }
 if(aux == 3) {//utiliza o valor da variavel para definir o a frequencia;//TERMOPAR ABERTO
-TIM10->PSC=9999;
-TIM10->ARR=113;
+TIM10->PSC=999;
+TIM10->ARR=2665;
 }
 if(aux == 4) {//utiliza o valor da variavel para definir o a frequencia;//CURTO NA SAIDA
-TIM10->PSC=9999;
-TIM10->ARR=113;
+TIM10->PSC=1999;
+TIM10->ARR=999;
 }
 if(aux == 5) {//utiliza o valor da variavel para definir o a frequencia;//FUSIVEL ABERTO
-TIM10->PSC=9999;
-TIM10->ARR=113;
+TIM10->PSC=1599;
+TIM10->ARR=999;
 }
 }
 while((TIM10->SR & 0x0001) == 0x0000) {  // verifica se o cronômetro foi "setado" (acabou a contagem);
@@ -52,3 +53,4 @@ while((TIM10->SR & 0x0001) == 0x0000) {  // verifica se o cronômetro foi "setad
 }
 TIM10->SR&=~(0x0001);  // "resetar" o cronômetro, botando zero no bit em questão;// RESETA O FLAG
 }
+
