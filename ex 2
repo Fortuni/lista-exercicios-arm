@@ -1,0 +1,46 @@
+//Exercício 2 : Altere o exercício 1 para que a frequência da piscada seja
+//função de uma entrada E. Quando E estiver em nivel alto, o led pisca a 2 Hz,
+//caso contrário pisca a 7 Hz. O led é ativo em HIGH e conectado ao PB0. A
+//entrada E será feita através do pino PC1. Utilize o TIM10.
+//2HZ PSC=3999  ARR=9999
+//7HZ PSC=9999  ARR=113
+
+
+#include "main.h"
+
+int main(void)
+{
+	int Vpsc=0, Varr=0;
+	int set1 = 0;
+
+		RCC->AHB1ENR=0X087;  //liga o clock
+		GPIOA->MODER|0X28000400; //PA 5 COMO SAIDA
+		GPIOC->MODER|0X0000;//botao do arm como entrada
+		RCC->APB2ENR|=0X20000; //HABILITA O CLOCK DO TIMER 10
+			TIM10->CR1|0X05;
+			TIM10->PSC = Vpsc;
+			TIM10->ARR = Varr;
+		  if(set1 == 0){
+			  Varr=113;
+			  Vpsc=9999; //7HZ
+		  }
+		  if(set1 == 1){
+			  Varr=3999;
+			  Vpsc=9999; //2HZ
+		  }
+
+  while (1)
+  {
+	  if(((GPIOB->IDR&0X2000)==0X2000)&& set1==1){
+			 if((TIM10->SR &0x01)==0x01){
+				 GPIOA->ODR ^=0X20;//INVERTE ESTADO PA5
+				 TIM10 ->SR &=~(0X01);//LIMPANDO FLAG DO TIMER10
+				 set1==0;
+
+
+			  }
+
+
+	 }
+  }
+}
