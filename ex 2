@@ -10,7 +10,7 @@
 #include "main.h"
 
 void tempo (void) {
-if((GPIOC->IDR&=0x2000) == 0x00000000) {
+if((GPIOC->IDR&=0x2000) == 0x00000000) {//TESTA SE O PINO DE ENTRADA ESTA EM SINAL LOGICO ALTO
 TIM10->PSC=9999;
 TIM10->ARR=113;
 }
@@ -37,9 +37,9 @@ int main(void)
 
   while (1)
   {
-	  GPIOA->ODR|=0x20;  // liga o PC0;
+	  GPIOA->ODR|=0x1  // liga o PC0;
 	  tempo();
-	  GPIOA->ODR&=~(0x20);  // desliga o PC0;
+	  GPIOA->ODR&=~(0x1;  // desliga o PC0;
 	  tempo();
 
 
