@@ -23,34 +23,90 @@
 
 
 void tempo (void) {
-if(aux == 0) {//utiliza o valor da variavel para definir o a frequencia; SEMPRE ACESO FUNCIONAMENTO OK
-TIM10->PSC=1;
-TIM10->ARR=1;
-}
-if(aux == 1) {//utiliza o valor da variavel para definir o a frequencia;//FALHA NA COMUNICAÇÃO
-TIM10->PSC=7999;
-TIM10->ARR=999;
-}
-if(aux == 2) {//utiliza o valor da variavel para definir o a frequencia;ENTRADAS DIGITAIS ABERTAS
-TIM10->PSC=999;
-TIM10->ARR=3999;
-}
-if(aux == 3) {//utiliza o valor da variavel para definir o a frequencia;//TERMOPAR ABERTO
-TIM10->PSC=999;
-TIM10->ARR=2665;
-}
-if(aux == 4) {//utiliza o valor da variavel para definir o a frequencia;//CURTO NA SAIDA
-TIM10->PSC=1999;
-TIM10->ARR=999;
-}
-if(aux == 5) {//utiliza o valor da variavel para definir o a frequencia;//FUSIVEL ABERTO
-TIM10->PSC=1599;
-TIM10->ARR=999;
-}
-}
-while((TIM10->SR & 0x0001) == 0x0000) {  // verifica se o cronômetro foi "setado" (acabou a contagem);
-// enquanto o cronômetro não for "setado para 1", a contagem irá continuar dentro desse while;//
-}
-TIM10->SR&=~(0x0001);  // "resetar" o cronômetro, botando zero no bit em questão;// RESETA O FLAG
+
+	while((TIM10->SR & 0x1) == 0x0) {};
+		TIM10->SR&=~(0x1);
 }
 
+void toff (void) {
+
+	while((TIM11->SR & 0x1) == 0x0) {};
+		TIM11->SR&=~(0x1);
+}
+
+
+
+#include "main.h"
+
+int main()
+{
+	RCC->AHB1ENR=0X087;  //liga o clock
+	RCC->APB2ENR|=0X20000; //HABILITA O TIMER 10
+	RCC->APB2ENR|=0X40000; //HABILITA O TIMER 11
+	GPIOA->MODER|=0X100;//PINO A8 COMO SAIDA
+	GPIOB->MODER|=0X00;//pinos b como entrada
+
+	TIM10->CR1|=0X05;//habilita o clock
+	TIM10->PSC=1599;
+	TIM10->ARR=999;
+	TIM11->CR1|=0X05;
+	TIM11->PSC=7999;
+	TIM11->ARR=999;
+
+	int aux;
+
+	while(1){
+		aux=GPIOB->IDR&0x38; //pinos b3;b4;b5
+			  aux=aux>>3;//desloca 3 casas para direita
+
+			  if(aux==0){
+				  GPIOA->ODR=0X100;
+			  }
+			  if(aux==1){
+				  for(int i=0;i<1;i++){
+					  GPIOA->ODR=0X100;
+					  tempo();}
+				  for(int i=0;i<1;i++){
+					  GPIOA->ODR=~ 0X100;
+					  toff();
+				  }
+			  }
+			  if(aux==2){
+				  for(int i=0;i<2;i++){
+					  GPIOA->ODR=0X100;
+					  tempo();}
+				  for(int i=0;i<1;i++){
+					  GPIOA->ODR=~ 0X100;
+					  toff();
+				  }
+			  }
+
+			  if(aux==3){
+				  for(int i=0;i<3;i++){
+					  GPIOA->ODR=0X100;
+					  tempo();}
+				  for(int i=0;i<1;i++){
+					  GPIOA->ODR=~ 0X100;
+					  toff();
+				  }
+			  }
+			  if(aux=4){
+				  for(int i=0;i<5;i++){
+					  GPIOA->ODR=0X100;
+					  tempo();}
+				  for(int i=0;i<1;i++){
+					  GPIOA->ODR=~ 0X100;
+					  toff();
+				  }
+			  }
+			  if(aux=5){
+				  for(int i=0;i<5;i++){
+					  GPIOA->ODR=0X100;
+					  tempo();}
+				  for(int i=0;i<1;i++){
+					  GPIOA->ODR=~ 0X100;
+					  toff();
+				  }
+			 }
+	}
+}
