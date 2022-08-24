@@ -8,21 +8,21 @@
 
 #include "main.h"
 
-void tempo (void) {
-if((GPIOC->IDR&=0x2) == 0x00000000) {//TESTA SE O PC1 PINO DE ENTRADA ESTA EM SINAL LOGICO ALTO
-TIM10->PSC=9999;
-TIM10->ARR=113;
-}
-else {
-TIM10->PSC=999;
-TIM10->ARR=3999;
+	void tempo (void) {
+	if((GPIOC->IDR&=0x2) == 0x00000000) {//TESTA SE O PC1 PINO DE ENTRADA ESTA EM SINAL LOGICO ALTO
+		TIM10->PSC=1142;
+		TIM10->ARR=999;
+	}
+	else {
+		TIM10->PSC=3999;
+		TIM10->ARR=999;
 
-}
-while((TIM10->SR & 0x0001) == 0x0000) {  // verifica se o cronômetro foi "setado" (acabou a contagem);
-// enquanto o cronômetro não for "setado para 1", a contagem irá continuar dentro desse while;//
-}
-TIM10->SR&=~(0x0001);  // "resetar" o cronômetro, botando zero no bit em questão;// RESETA O FLAG
-}
+	}
+	while((TIM10->SR & 0x0001) == 0x0000) {  // verifica se o cronômetro foi "setado" (acabou a contagem);
+	// enquanto o cronômetro não for "setado para 1", a contagem irá continuar dentro desse while;//
+		}
+		TIM10->SR&=~(0x0001);  // "resetar" o cronômetro, botando zero no bit em questão;// RESETA O FLAG
+	}
 
 
 int main(void)
@@ -38,6 +38,8 @@ int main(void)
   while (1)
   {
 	  GPIOB->ODR|=0x1;  // liga o PB0;
+	  TIM10->CNT=0;
+	  TIM10->SR&=~(0x0001);
 	  tempo();
 	  GPIOB->ODR&=~(0x1);  // desliga o PB0;
 	  tempo();
