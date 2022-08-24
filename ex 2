@@ -1,4 +1,3 @@
-
 //Exercício 2 : Altere o exercício 1 para que a frequência da piscada seja
 //função de uma entrada E. Quando E estiver em nivel alto, o led pisca a 2 Hz,
 //caso contrário pisca a 7 Hz. O led é ativo em HIGH e conectado ao PB0. A
@@ -10,7 +9,7 @@
 #include "main.h"
 
 void tempo (void) {
-if((GPIOC->IDR&=0x2000) == 0x00000000) {//TESTA SE O PINO DE ENTRADA ESTA EM SINAL LOGICO ALTO
+if((GPIOC->IDR&=0x2) == 0x00000000) {//TESTA SE O PC1 PINO DE ENTRADA ESTA EM SINAL LOGICO ALTO
 TIM10->PSC=9999;
 TIM10->ARR=113;
 }
@@ -30,16 +29,17 @@ int main(void)
 {
 		RCC->AHB1ENR=0X087;  //liga o clock
 		GPIOA->MODER|=0X28555500; //PA 5 COMO SAIDA
-		GPIOC->MODER|=0X0000;//botao do arm como entrada
+		GPIOC->MODER|=0X0002;//BOTAO PC1
+		GPIOB->MODER|=0X01;//LED PB0
 		RCC->APB2ENR|=0X20000; //HABILITA O CLOCK DO TIMER 10
 		TIM10->CR1|=0X05;
 
 
   while (1)
   {
-	  GPIOA->ODR|=0x1  // liga o PC0;
+	  GPIOB->ODR|=0x1;  // liga o PB0;
 	  tempo();
-	  GPIOA->ODR&=~(0x1;  // desliga o PC0;
+	  GPIOB->ODR&=~(0x1);  // desliga o PB0;
 	  tempo();
 
 
