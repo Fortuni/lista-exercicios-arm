@@ -21,29 +21,29 @@
 //Utilize os pinos PB3, PB4 e PB5 para entrada do código. Podem ser
 //utilizados botões, chaves ou mesmo jumpers.
 
+#include "main.h"
 
 void tempo (void) {
 
-	while((TIM10->SR & 0x1) == 0x0) {};
+	while((TIM10->SR & 0x1) == 0x0) {}
 		TIM10->SR&=~(0x1);
 }
 
 void toff (void) {
 
-	while((TIM11->SR & 0x1) == 0x0) {};
+	while((TIM11->SR & 0x1) == 0x0) {}
 		TIM11->SR&=~(0x1);
 }
 
 
 
-#include "main.h"
 
 int main()
 {
 	RCC->AHB1ENR=0X087;  //liga o clock
 	RCC->APB2ENR|=0X20000; //HABILITA O TIMER 10
 	RCC->APB2ENR|=0X40000; //HABILITA O TIMER 11
-	GPIOA->MODER|=0X100;//PINO A8 COMO SAIDA
+	GPIOA->MODER|=0X10000;//PINO A8 COMO SAIDA
 	GPIOB->MODER|=0X00;//pinos b como entrada
 
 	TIM10->CR1|=0X05;//habilita o clock
@@ -90,7 +90,7 @@ int main()
 					  toff();
 				  }
 			  }
-			  if(aux=4){
+			  if(aux==4){
 				  for(int i=0;i<5;i++){
 					  GPIOA->ODR=0X100;
 					  tempo();}
@@ -99,7 +99,7 @@ int main()
 					  toff();
 				  }
 			  }
-			  if(aux=5){
+			  if(aux==5){
 				  for(int i=0;i<5;i++){
 					  GPIOA->ODR=0X100;
 					  tempo();}
