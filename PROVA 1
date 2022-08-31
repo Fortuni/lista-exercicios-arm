@@ -1,46 +1,42 @@
 #include "main.h"
 
-	void tempo (void) {
-	while((TIM10->SR & 0x1) == 0x1) {  // verifica se o cronômetro foi "setado" (acabou a contagem);
-	// enquanto o cronômetro não for "setado para 1", a contagem irá continuar dentro desse while;//
-		}
-		TIM10->SR&=~(0x1);  // "resetar" o cronômetro, botando zero no bit em questão;// RESETA O FLAG
-	}
-	void tempoF (void) {
-	while((TIM11->SR & 0x1) == 0x1) {  // verifica se o cronômetro foi "setado" (acabou a contagem);
-	// enquanto o cronômetro não for "setado para 1", a contagem irá continuar dentro desse while;//
-		}
-		TIM11->SR&=~(0x1);  // "resetar" o cronômetro, botando zero no bit em questão;// RESETA O FLAG
-	}
-
-
 int main(void)
 {
 
 		RCC->AHB1ENR=0X087;  //liga o clock
-		GPIOC->MODER|=0X0001;//led PC0
-		GPIOB->MODER|=0X00;//botao  PB0
-		RCC->APB2ENR|=0X20000; //HABILITA O CLOCK DO TIMER 10
-		RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
+		GPIOA->MODER|=0X28555500; //PA 5 COMO SAIDA
+		GPIOC->MODER|=0X05;
+		GPIOB->MODER|=0X0;
 
-		TIM11->CR1|=0X05;
-		TIM11->PSC=1599;
-		TIM11->ARR=999;
+			RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
+			TIM11->CR1|=0X05;
 
-		TIM10->CR1|=0X05;
-		TIM10->ARR=999;
-		TIM10->PSC=3199;
 
-  while (1){
-	  if((GPIOB->IDR&0X1)==0X1){
-	  	  for(int i=0;i<5;i++){
-	  			 GPIOC->ODR^=0x01; //inverte o estado do PA5
-	  			 tempo();
-	  		 }
-	  	  }
-	  		 for(int i=0;i<2;i++){
-	  			 GPIOC->ODR =~(0X1);
-	  			tempoF();
-	  		 	 }
-  }
+  while (1)
+  {
+
+	  if((GPIOB->IDR&=0x1) == 0x00000000){
+		  for(int i=0;i<5;i++){
+			  if((TIM11->SR &0x01)==0x01){
+				  GPIOC->ODR ^=0X1;//INVERTE ESTADO PC0
+					TIM11->PSC=3199;
+					TIM11->ARR=999;
+			  	  TIM11 ->SR &=~(0X01);//LIMPANDO FLAG DO TIMER10
+			  }
+		 }
+		  for(int x=0;x<2;x++){
+  		  	  if((TIM11->SR &0x01)==0x01){
+  		  		  RCC->APB2ENR|=~0X40000; //HABILITA O CLOCK DO TIMER 11
+  		  		  TIM11->PSC=1599;
+  		  		  TIM11->ARR=999;
+  		  	 	  GPIOC->ODR =~(0X1);//INVERTE ESTADO PC1
+  		  		  TIM11 ->SR &=~(0X01);//LIMPANDO FLAG DO TIMER10
+  		  	  }
+		  }
+	  }
+	  if((GPIOB->IDR&=0x1) == 0x1){
+			RCC->APB2ENR|=~0X40000; //HABILITA O CLOCK DO TIMER 11
+			  GPIOC->ODR =~(0X1);//INVERTE ESTADO PC0
+	  }
+}
 }
