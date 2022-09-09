@@ -1,3 +1,8 @@
+/*EX 4 Monte dois conjuntos de 3 leds, um verde, um amarelo e um vermelho, nas
+posições de um semáforo (se não tiveres as cores, não importa.).
+Desenvolva um programa de controle para este semáforo de dois tempos. O
+tempo de verde/vermelho deve ser de 700 ms e o tempo de amarelo aceso é
+200ms. Faça a sequência Vd → Vd/Am → Vm*/
 #include "main.h"
 
 
@@ -53,29 +58,5 @@ int main(void)
 	  for(int i=0;i<N;i++){
 		  ms700();
 	  }
-  }
-}
-
-
-  while (1)
-  {
-	  GPIOC->ODR=0X4;//liga led verde
-	  ms700();
-	  GPIOC->ODR=~(0X4);//desliga verde
-
-	  GPIOC->ODR=0X6;//liga  amarelo  e verde
-	  ms200();
-
-	  GPIOC->ODR=~(0X6);//desliga amarelo e verde
-
-
-	  GPIOC->ODR=0X1;//liga vermelho
-	  ms700();
-	  GPIOC->ODR=~(0X1);//desliga vermelho
-
-
-
-
-
   }
 }
