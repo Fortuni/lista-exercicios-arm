@@ -1,0 +1,85 @@
+/*Exercício 9: Elabore um programa que gere os sons de, ao menos, os 7 tons
+maiores. As notas são acionadas através de botões e reproduzidas em um
+alto-falante.
+Nota Freq(Hz)  Periodo(t)  	ARR  	PSC		PINO
+________________________________________________
+Dó 	 261,63     3,82ms		999		60		A0
+Re   293,66		3,4ms		999		53		A1
+Mi   329,63		3,03ms		999		47		A2
+Fá   349,23 	2,86ms		999		45		A3
+Sol  392		2,55ms		999		40		A4
+La   440		2,27ms		999		35		A5
+Si   493,88		2,024ms		999		31		A6
+*/
+#include "main.h"
+//funcao para trocar frequencia da nota
+void bota(void){
+	
+	  alfa=GPIOA->IDR&0x7FF; //pinos A0 -> A6
+	  //DÓ
+	  if(alfa==1){
+			TIM11->PSC=60;
+			TIM11->ARR=999;
+	  }
+	  //RE
+	  if(alfa==2){
+			TIM11->PSC=53;
+			TIM11->ARR=999;
+	  }
+	  //MI
+	  if(alfa==3){
+			TIM11->PSC=47;
+			TIM11->ARR=999;
+	  }
+	  //FA
+	  if(alfa==4){
+			TIM11->PSC=45;
+			TIM11->ARR=999;
+	  }
+	  //SOL
+	  if(alfa==5){
+			TIM11->PSC=40;
+			TIM11->ARR=999;
+	  }
+	  //LA
+	  if(alfa==6){
+			TIM11->PSC=35;
+			TIM11->ARR=999;
+	  }
+	  //SI
+	  if(alfa==7){
+			TIM11->PSC=31;
+			TIM11->ARR=999;
+	  }
+	  
+		while((TIM11->SR & 0x1) == 0x0) {}
+			TIM11->SR&=~(0x1);
+}
+
+
+int main(void)
+{
+	int alfa;
+
+
+	RCC->AHB1ENR=0X00000087;  //liga o clock
+		GPIOC->MODER|=0X00005555; // ativando pinos de 0 a 7 para saida
+		GPIOA->MODER|=0X00000000; //PA 0-6 COMO CHAVES
+
+		RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
+		TIM11->CR1|=0X05;
+
+
+  while (1)
+  {
+	  alfa=GPIOA->IDR&0x7FF; //checa se nao tem nenhuma chave pressionada
+	  if(alfa==0){
+		GPIOC->ODR&=~(0X1);//PC0
+		//////////
+		
+		GPIOC->ODR=0X01;//PC0
+			nota();
+		  }
+	  }
+
+}
