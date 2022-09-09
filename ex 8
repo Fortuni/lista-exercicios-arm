@@ -1,0 +1,170 @@
+#include "main.h"
+//função de tempo
+void tempo(void){
+	while((TIM11->SR & 0x1) == 0x0) {}
+		TIM11->SR&=~(0x1);
+}
+
+void seq_1(){
+	GPIOC->ODR|=0X1; //liga p0
+    		tempo();
+    	GPIOC->ODR|=0X2;  // liga p1
+    		tempo();
+    	GPIOC->ODR&=~(0X1); //desliga p0
+    		tempo();
+    	GPIOC->ODR|=0X4;  // liga p2
+        	tempo();
+        GPIOC->ODR&=~(0X2); //desliga p1
+        	tempo();
+        GPIOC->ODR|=0X8;  // liga p3
+        	tempo();
+        GPIOC->ODR&=~(0X4); //desliga p2
+    		tempo();
+        GPIOC->ODR|=0X10;  // liga  p4
+        	tempo();
+        GPIOC->ODR&=~(0X8); //desliga p3
+        	tempo();
+        GPIOC->ODR|=0X20;  // liga p5
+        	tempo();
+        GPIOC->ODR&=~(0X10); //desliga p4
+        	tempo();
+        GPIOC->ODR|=0X40;  // liga p6
+        	tempo();
+        GPIOC->ODR&=~(0X20); //desliga p5
+        	tempo();
+        GPIOC->ODR|=0X80;  // liga p7
+        	tempo();
+        GPIOC->ODR&=~(0X40); //desliga p6
+        	tempo();
+        GPIOC->ODR|=0X40;  // liga p6
+            tempo();
+        GPIOC->ODR&=~(0X80); //desliga p7
+        	tempo();
+        GPIOC->ODR|=0X20;  // liga p5
+            tempo();
+        GPIOC->ODR&=~(0X40); //desliga p6
+           	tempo();
+        GPIOC->ODR|=0X10;  // liga p4
+        	tempo();
+        GPIOC->ODR&=~(0X20); //desliga p5
+            tempo();
+        GPIOC->ODR|=0X8;  // liga p3
+        	tempo();
+        GPIOC->ODR&=~(0X10); //desliga p4
+           	tempo();
+        GPIOC->ODR|=0X4;  // liga p2
+        	tempo();
+        GPIOC->ODR&=~(0X8); //desliga p3
+            	tempo();
+        GPIOC->ODR|=0X2;  // liga p1
+        	tempo();
+        GPIOC->ODR&=~(0X4); //desliga p2
+           	tempo();
+        GPIOC->ODR|=0X1;  // liga p0
+            tempo();
+        GPIOC->ODR&=~(0X2); //desliga p1
+           	tempo();
+
+}
+void seq_2(){
+	  //liga
+		GPIOC->ODR|=0X0001; //p0
+			tempo();
+		GPIOC->ODR|=0X0002; //p1
+			tempo();
+		GPIOC->ODR|=0X0004; //p2
+			tempo();
+		GPIOC->ODR|=0X0008; //p3
+			tempo();
+		GPIOC->ODR|=0X0010; //p4
+			tempo();
+		GPIOC->ODR|=0X0020; //p5
+			tempo();
+		GPIOC->ODR|=0X0040; //p6
+			tempo();
+		GPIOC->ODR|=0X0080; //p7
+			tempo();
+
+		//desliga
+		GPIOC->ODR&=~0X0080;
+			tempo();
+		GPIOC->ODR&=~0X0040;
+			tempo();
+		GPIOC->ODR&=~0X0020;
+			tempo();
+		GPIOC->ODR&=~0X0010;
+			tempo();
+		GPIOC->ODR&=~0X0008;
+			tempo();
+		GPIOC->ODR&=~0X0004;
+			tempo();
+		GPIOC->ODR&=~0X0002;
+			tempo();
+		GPIOC->ODR&=~0X0001;
+			tempo();
+
+
+}
+void seq_3(){
+	int aux;
+	  //liga
+	  for(aux=0; aux<7; aux++){
+		  GPIOC->ODR|=1<<aux;
+		  tempo();
+	  }
+
+		  //desliga
+	  for(aux=0; aux<7; aux++){
+		  GPIOC->ODR&=~(1<<aux);
+		  tempo();
+	  }
+	  //liga
+	  for(aux=7; aux>0; aux--){
+		  GPIOC->ODR|=1<<aux;
+		  tempo();
+	  }
+	  //desliga
+	  for(aux=7; aux>0; aux--){
+		  GPIOC->ODR&=~(1<<aux);
+		  tempo();
+	  }
+}
+
+
+
+
+int main(void)
+{
+	int alfa;
+
+
+	RCC->AHB1ENR=0X00000087;  //liga o clock
+		GPIOC->MODER|=0X00005555; // ativando pinos de 0 a 7 para saida
+		GPIOA->MODER|=0X00000000; //PA 0 E PA 1 COMO CHAVES
+
+		RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
+		TIM11->CR1|=0X05;
+		////////50ms
+		TIM11->PSC=799;
+		TIM11->ARR=999;
+
+
+  while (1)
+  {
+	  alfa=GPIOA->IDR&0x3; //pinos A0 E A1
+	  if(alfa==0){
+		  for(int i;i<8;i++){
+			  GPIOC->ODR&=~(1<<alfa);
+		  }
+	  }
+	  if(alfa==1){
+		  seq_1();
+	  }
+	  if(alfa==2){
+		  seq_2();
+	  }
+	  if(alfa==3){
+		  seq_3();
+	  }
+  }
+}
