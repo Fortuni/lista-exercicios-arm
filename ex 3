@@ -24,89 +24,104 @@
 #include "main.h"
 
 void tempo (void) {
-
 	while((TIM10->SR & 0x1) == 0x0) {}
 		TIM10->SR&=~(0x1);
 }
 
-void toff (void) {
-
-	while((TIM11->SR & 0x1) == 0x0) {}
-		TIM11->SR&=~(0x1);
-}
-
-
-
 
 int main()
 {
+
+	int aux=0;
 	RCC->AHB1ENR=0X087;  //liga o clock
 	RCC->APB2ENR|=0X20000; //HABILITA O TIMER 10
 	RCC->APB2ENR|=0X40000; //HABILITA O TIMER 11
 	GPIOA->MODER|=0X10000;//PINO A8 COMO SAIDA
 	GPIOB->MODER|=0X00;//pinos b como entrada
 
+	TIM10->PSC=1599;//100ms
+	TIM10->ARR=999;//100ms
 	TIM10->CR1|=0X05;//habilita o clock
-	TIM10->PSC=1599;
-	TIM10->ARR=999;
-	TIM11->CR1|=0X05;
-	TIM11->PSC=7999;
-	TIM11->ARR=999;
-
-	int aux;
 
 	while(1){
+
 		aux=GPIOB->IDR&0x38; //pinos b3;b4;b5
 			  aux=aux>>3;//desloca 3 casas para direita
+
+			  //pisca 1 vez+
+		  if(aux==1){
+			  GPIOA->ODR=0X100;
+			  tempo();
+			  GPIOA->ODR=~(0X100);
+			  tempo();
+			  for (int i = 0; i < 10; i++)
+			  	    {
+			  tempo ();
+			  }
+		  }
+
+		  //pisca 2 vezes
+		  if(aux==2){
+			  for(int i=0;i<2;i++){
+			  GPIOA->ODR=0X100;
+			  tempo();
+			  GPIOA->ODR=~(0X100);
+			  tempo();
+			  }
+			  for (int i = 0; i < 10; i++)
+			  	    {
+			  tempo ();
+			  }
+		  }
+		  //pisca 3 vezes
+		  if(aux==3){
+			  for(int i=0;i<3;i++){
+			  GPIOA->ODR=0X100;
+			  tempo();
+			  GPIOA->ODR=~(0X100);
+			  tempo();
+			  }
+			  for (int i = 0; i < 10; i++)
+			  	    {
+			  tempo ();
+			  }
+		  }
+		  //pisca 4 vezes
+		  if(aux==4){
+			  for(int i=0;i<4;i++){
+			  GPIOA->ODR=0X100;
+			  tempo();
+			  GPIOA->ODR=~(0X100);
+			  tempo();
+			  }
+			  for (int i = 0; i < 10; i++)
+			  	    {
+			  tempo ();
+			  }
+		  }
+		  //pisca 5 vezes
+		  if(aux==5){
+			  for(int i=0;i<5;i++){
+			  GPIOA->ODR=0X100;
+			  tempo();
+			  GPIOA->ODR=~(0X100);
+			  tempo();
+		  	  }
+			  for (int i = 0; i < 10; i++)
+			  	    {
+			  tempo ();
+			  }
+		  }
 
 			  if(aux==0){
 				  GPIOA->ODR=0X100;
 			  }
-			  if(aux==1){
-				  for(int i=0;i<1;i++){
-					  GPIOA->ODR=0X100;
-					  tempo();}
-				  for(int i=0;i<1;i++){
-					  GPIOA->ODR=~ 0X100;
-					  toff();
-				  }
+			  if(aux==6){
+				  GPIOA->ODR=0X100;
 			  }
-			  if(aux==2){
-				  for(int i=0;i<2;i++){
-					  GPIOA->ODR=0X100;
-					  tempo();}
-				  for(int i=0;i<1;i++){
-					  GPIOA->ODR=~ 0X100;
-					  toff();
-				  }
+			  if(aux==7){
+				  GPIOA->ODR=0X100;
 			  }
 
-			  if(aux==3){
-				  for(int i=0;i<3;i++){
-					  GPIOA->ODR=0X100;
-					  tempo();}
-				  for(int i=0;i<1;i++){
-					  GPIOA->ODR=~ 0X100;
-					  toff();
-				  }
-			  }
-			  if(aux==4){
-				  for(int i=0;i<5;i++){
-					  GPIOA->ODR=0X100;
-					  tempo();}
-				  for(int i=0;i<1;i++){
-					  GPIOA->ODR=~ 0X100;
-					  toff();
-				  }
-			  }
-			  if(aux==5){
-				  for(int i=0;i<5;i++){
-					  GPIOA->ODR=0X100;
-					  tempo();}
-				  for(int i=0;i<1;i++){
-					  GPIOA->ODR=~ 0X100;
-					  toff();
-				  }
-			 }
 	}
 }
