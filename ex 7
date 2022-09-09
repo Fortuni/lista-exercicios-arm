@@ -1,0 +1,46 @@
+#include "main.h"
+//função de tempo
+void tempo(void){
+	while((TIM11->SR & 0x1) == 0x0) {}
+		TIM11->SR&=~(0x1);
+}
+
+int main(void)
+{
+	int aux;
+
+		RCC->AHB1ENR=0X00000087;  //liga o clock
+		GPIOC->MODER|=0X00005555; // ativando pinos de 0 a 7 para saida
+
+		RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
+		TIM11->CR1|=0X05;
+		////////50ms
+		TIM11->PSC=799;
+		TIM11->ARR=999;
+
+
+  while (1)
+  {
+	  //liga
+	  for(aux=0; aux<7; aux++){
+		  GPIOC->ODR|=1<<aux;
+		  tempo();
+	  }
+
+		  //desliga
+	  for(aux=0; aux<7; aux++){
+		  GPIOC->ODR&=~(1<<aux);
+		  tempo();
+	  }
+	  //liga
+	  for(aux=7; aux>0; aux--){
+		  GPIOC->ODR|=1<<aux;
+		  tempo();
+	  }
+	  //desliga
+	  for(aux=7; aux>0; aux--){
+		  GPIOC->ODR&=~(1<<aux);
+		  tempo();
+	  }
+  }
+}
