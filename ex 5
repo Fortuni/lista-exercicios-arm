@@ -1,0 +1,81 @@
+/* Includes ------------------------------------------------------------------*/
+
+
+#include "main.h"
+
+
+//função tempo
+int tempo(void)
+{
+    for(int i=0 ;i<50000;i++);
+}
+
+int main()
+{
+    RCC->AHB1ENR=0X87;
+    GPIOC->MODER|=0X5555;
+    GPIOA->MODER|=0X28000400;
+
+while(1){
+
+    	GPIOC->ODR|=0X1; //liga p0
+    		tempo();
+    	GPIOC->ODR|=0X2;  // liga p1
+    		tempo();
+    	GPIOC->ODR&=~(0X1); //desliga p0
+    		tempo();
+    	GPIOC->ODR|=0X4;  // liga p2
+        	tempo();
+        GPIOC->ODR&=~(0X2); //desliga p1
+        	tempo();
+        GPIOC->ODR|=0X8;  // liga p3
+        	tempo();
+        GPIOC->ODR&=~(0X4); //desliga p2
+    		tempo();
+        GPIOC->ODR|=0X10;  // liga  p4
+        	tempo();
+        GPIOC->ODR&=~(0X8); //desliga p3
+        	tempo();
+        GPIOC->ODR|=0X20;  // liga p5
+        	tempo();
+        GPIOC->ODR&=~(0X10); //desliga p4
+        	tempo();
+        GPIOC->ODR|=0X40;  // liga p6
+        	tempo();
+        GPIOC->ODR&=~(0X20); //desliga p5
+        	tempo();
+        GPIOC->ODR|=0X80;  // liga p7
+        	tempo();
+        GPIOC->ODR&=~(0X40); //desliga p6
+        	tempo();
+        GPIOC->ODR|=0X40;  // liga p6
+            tempo();
+        GPIOC->ODR&=~(0X80); //desliga p7
+        	tempo();
+        GPIOC->ODR|=0X20;  // liga p5
+            tempo();
+        GPIOC->ODR&=~(0X40); //desliga p6
+           	tempo();
+        GPIOC->ODR|=0X10;  // liga p4
+        	tempo();
+        GPIOC->ODR&=~(0X20); //desliga p5
+            tempo();
+        GPIOC->ODR|=0X8;  // liga p3
+        	tempo();
+        GPIOC->ODR&=~(0X10); //desliga p4
+           	tempo();
+        GPIOC->ODR|=0X4;  // liga p2
+        	tempo();
+        GPIOC->ODR&=~(0X8); //desliga p3
+            	tempo();
+        GPIOC->ODR|=0X2;  // liga p1
+        	tempo();
+        GPIOC->ODR&=~(0X4); //desliga p2
+           	tempo();
+        GPIOC->ODR|=0X1;  // liga p0
+            tempo();
+        GPIOC->ODR&=~(0X2); //desliga p1
+           	tempo();
+
+}
+}
