@@ -1,0 +1,58 @@
+#include "main.h"
+
+
+void ms200(void){
+	while((TIM10->SR & 0x1) == 0x0) {}
+		TIM10->SR&=~(0x1);
+}
+void ms700(void){
+	while((TIM11->SR & 0x1) == 0x0) {}
+		TIM11->SR&=~(0x1);
+}
+
+
+int main(void)
+{
+
+		RCC->AHB1ENR=0X087;  //liga o clock do arm
+		GPIOC->MODER|=0X015;//PC0, 1 E 2 COMO SAIDA
+		//PC0 LED VERMELHO
+		//PC1 LED AMARELO
+		//PC2 LED VERDE
+
+			RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
+			TIM11->CR1|=0X05;
+			////////700ms
+			TIM11->PSC=11199;
+			TIM11->ARR=999;
+
+
+			RCC->APB2ENR|=0X20000; //HABILITA O CLOCK DO TIMER 10
+			TIM10->CR1|=0X05;
+			////////200ms
+			TIM10->PSC=3199;
+			TIM10->ARR=999;
+
+
+  while (1)
+  {
+	  GPIOC->ODR=0X4;//liga led verde
+	  ms700();
+	  GPIOC->ODR=~(0X4);//desliga verde
+
+	  GPIOC->ODR=0X6;//liga  amarelo  e verde
+	  ms200();
+
+	  GPIOC->ODR=~(0X6);//desliga amarelo e verde
+
+
+	  GPIOC->ODR=0X1;//liga vermelho
+	  ms700();
+	  GPIOC->ODR=~(0X1);//desliga vermelho
+
+
+
+
+
+  }
+}
