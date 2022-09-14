@@ -27,27 +27,27 @@ void bota(void){
 			TIM11->ARR=999;
 	  }
 	  //MI
-	  if(alfa==3){
+	  if(alfa==4){
 			TIM11->PSC=47;
 			TIM11->ARR=999;
 	  }
 	  //FA
-	  if(alfa==4){
+	  if(alfa==8){
 			TIM11->PSC=45;
 			TIM11->ARR=999;
 	  }
 	  //SOL
-	  if(alfa==5){
+	  if(alfa==10){
 			TIM11->PSC=40;
 			TIM11->ARR=999;
 	  }
 	  //LA
-	  if(alfa==6){
+	  if(alfa==20){
 			TIM11->PSC=35;
 			TIM11->ARR=999;
 	  }
 	  //SI
-	  if(alfa==7){
+	  if(alfa==40){
 			TIM11->PSC=31;
 			TIM11->ARR=999;
 	  }
