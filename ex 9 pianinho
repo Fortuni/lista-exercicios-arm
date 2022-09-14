@@ -13,7 +13,7 @@ Si   493,88		2,024ms		999		31		A6
 */
 #include "main.h"
 //funcao para trocar frequencia da nota
-void bota(void){
+void nota(void){
 	
 	  alfa=GPIOA->IDR&0x7FF; //pinos A0 -> A6
 	  //DÓ
@@ -76,10 +76,11 @@ int main(void)
 	  if(alfa==0){
 		GPIOC->ODR&=~(0X1);//PC0
 		//////////
-		
+	  }
+	   else{
 		GPIOC->ODR=0X01;//PC0
-			nota();
-		  }
+		nota();
+	   }
 	  }
 
 }
