@@ -22,9 +22,14 @@ int main(void)
 
 		RCC->AHB1ENR=0X087;  //liga o clock do arm
 		GPIOC->MODER|=0X015;//PC0, 1 E 2 COMO SAIDA
-		//PC0 LED VERMELHO
-		//PC1 LED AMARELO
-		//PC2 LED VERDE
+		GPIOB->MODER|=0X15;//PB0, 1 E 2 COMO SAIDA
+		//PC0 LED VERMELHO 1
+		//PC1 LED AMARELO  1
+		//PC2 LED VERDE    1
+
+		//PB0 LED VERMELHO 2
+		//PB1 LED AMARELO  2
+		//PB2 LED VERDE    2
 
 			RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
 			TIM11->CR1|=0X05;
@@ -42,21 +47,30 @@ int main(void)
 
   while (1)
   {
-	  GPIOC->ODR=0X4;//liga led verde
+	  GPIOC->ODR=0X4;//liga led verde1
+	  ms700();
+	  GPIOB->ODR=0X1;//acende vermelho2
 	  ms700();
 	  for(int i=0;i<N;i++){
 		  ms700();
 	  }
 
-	  GPIOC->ODR=0X6;//liga  amarelo  e verde
+	  GPIOC->ODR=0X6;//liga  amarelo1  e verde1
 	  ms200();
-	  for(int i=0;i<N;i++){
+	  for(int i=0;i<8;i++){
 		  ms200();
 	  }
-	  GPIOC->ODR=0X1;//liga vermelho
+	  GPIOC->ODR=0X1;//liga vermelho1
+	  ms700();
+	  GPIOB->ODR=0X4;//liga led verde2
 	  ms700();
 	  for(int i=0;i<N;i++){
 		  ms700();
+	  }
+	  GPIOB->ODR=0X6;//liga  amarelo2  e verde2
+	  ms200();
+	  for(int i=0;i<8;i++){
+		  ms200();
 	  }
   }
 }
