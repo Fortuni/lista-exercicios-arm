@@ -18,7 +18,8 @@ void ms700(void){
 
 int main(void)
 {
-	int N=4;
+	int N=1;
+	int M=3;
 
 		RCC->AHB1ENR=0X087;  //liga o clock do arm
 		GPIOC->MODER|=0X015;//PC0, 1 E 2 COMO SAIDA
@@ -57,7 +58,7 @@ int main(void)
 
 	  GPIOC->ODR=0X6;//liga  amarelo1  e verde1
 	  ms200();
-	  for(int i=0;i<8;i++){
+	  for(int i=0;i<M;i++){
 		  ms200();
 	  }
 	  GPIOC->ODR=0X1;//liga vermelho1
@@ -69,7 +70,7 @@ int main(void)
 	  }
 	  GPIOB->ODR=0X6;//liga  amarelo2  e verde2
 	  ms200();
-	  for(int i=0;i<8;i++){
+	  for(int i=0;i<M;i++){
 		  ms200();
 	  }
   }
