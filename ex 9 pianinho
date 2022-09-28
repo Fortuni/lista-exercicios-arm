@@ -26,7 +26,7 @@ int main(void)
 
 	RCC->AHB1ENR=0X00000087;  //liga o clock
 		GPIOC->MODER|=0X00001; // pc0
-		GPIOA->MODER|=0X00000000; //PA 0-6 COMO CHAVES
+		GPIOB->MODER|=0X00000000; //PA 0-6 COMO CHAVES
 
 		RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
 		TIM11->CR1|=0X05;
@@ -38,7 +38,7 @@ int main(void)
   {
 	 //checa se nao tem nenhuma chave pressionada
 		int alfa;
-		  alfa=GPIOA->IDR&0x7F; //pinos A0 -> A6
+		  alfa=GPIOB->IDR&0x7F; //pinos B0 -> B6
 		  if(alfa==0){
 			  GPIOC->ODR=~(0X01);//PC0
 		 		  }
@@ -67,27 +67,24 @@ int main(void)
 				nota();
 		  }
 		  //SOL
-		  if(alfa==10){
+		  if(alfa==16){
 				TIM11->PSC=40;
 				GPIOC->ODR^=0X01;//PC0
 				nota();
 		  }
 		  //LA
-		  if(alfa==20){
+		  if(alfa==32){
 				TIM11->PSC=35;
 				GPIOC->ODR^=0X01;//PC0
 				nota();
 		  }
 		  //SI
-		  if(alfa==40){
+		  if(alfa==64){
 				TIM11->PSC=31;
 				GPIOC->ODR^=0X01;//PC0
 				nota();
 		  }
 
-	   else{
-	   }
 	  }
 
 }
-
