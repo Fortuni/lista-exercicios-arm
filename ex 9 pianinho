@@ -14,44 +14,6 @@ Si   493,88		2,024ms		999		31		A6
 #include "main.h"
 //funcao para trocar frequencia da nota
 void nota(void){
-	int alfa;
-	  alfa=GPIOA->IDR&0x7FF; //pinos A0 -> A6
-	  //DÓ
-	  if(alfa==1){
-			TIM11->PSC=60;
-			TIM11->ARR=999;
-	  }
-	  //RE
-	  if(alfa==2){
-			TIM11->PSC=53;
-			TIM11->ARR=999;
-	  }
-	  //MI
-	  if(alfa==4){
-			TIM11->PSC=47;
-			TIM11->ARR=999;
-	  }
-	  //FA
-	  if(alfa==8){
-		  	TIM11->PSC=45;
-	    	TIM11->ARR=999;
-	  }
-	  //SOL
-	  if(alfa==10){
-			TIM11->PSC=40;
-			TIM11->ARR=999;
-	  }
-	  //LA
-	  if(alfa==20){
-			TIM11->PSC=35;
-			TIM11->ARR=999;
-	  }
-	  //SI
-	  if(alfa==40){
-			TIM11->PSC=31;
-			TIM11->ARR=999;
-	  }
-
 		while((TIM11->SR & 0x1) == 0x0) {}
 			TIM11->SR&=~(0x1);
 }
@@ -63,24 +25,69 @@ int main(void)
 
 
 	RCC->AHB1ENR=0X00000087;  //liga o clock
-		GPIOC->MODER|=0X00005555; // ativando pinos de 0 a 7 para saida
+		GPIOC->MODER|=0X00001; // pc0
 		GPIOA->MODER|=0X00000000; //PA 0-6 COMO CHAVES
 
 		RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
 		TIM11->CR1|=0X05;
 
+		TIM11->ARR=999;
+
 
   while (1)
   {
 	 //checa se nao tem nenhuma chave pressionada
-	  if((GPIOA->IDR&0x7FF)==0){
-		GPIOC->ODR&=~(0X1);//PC0
-		//////////
-	  }
+		int alfa;
+		  alfa=GPIOA->IDR&0x7F; //pinos A0 -> A6
+		  if(alfa==0){
+			  GPIOC->ODR=~(0X01);//PC0
+		 		  }
+		  //DÓ
+		  if(alfa==1){
+				TIM11->PSC=60;
+				GPIOC->ODR^=0X01;//PC0
+				nota();
+		  }
+		  //RE
+		  if(alfa==2){
+				TIM11->PSC=53;
+				GPIOC->ODR^=0X01;//PC0
+				nota();
+		  }
+		  //MI
+		  if(alfa==4){
+				TIM11->PSC=47;
+				GPIOC->ODR^=0X01;//PC0
+				nota();
+		  }
+		  //FA
+		  if(alfa==8){
+			  	TIM11->PSC=45;
+				GPIOC->ODR^=0X01;//PC0
+				nota();
+		  }
+		  //SOL
+		  if(alfa==10){
+				TIM11->PSC=40;
+				GPIOC->ODR^=0X01;//PC0
+				nota();
+		  }
+		  //LA
+		  if(alfa==20){
+				TIM11->PSC=35;
+				GPIOC->ODR^=0X01;//PC0
+				nota();
+		  }
+		  //SI
+		  if(alfa==40){
+				TIM11->PSC=31;
+				GPIOC->ODR^=0X01;//PC0
+				nota();
+		  }
+
 	   else{
-		GPIOC->ODR^=0X01;//PC0
-		nota();
 	   }
 	  }
 
 }
+
