@@ -14,7 +14,7 @@ Si   493,88		2,024ms		999		31		A6
 #include "main.h"
 //funcao para trocar frequencia da nota
 void nota(void){
-	
+	int alfa;
 	  alfa=GPIOA->IDR&0x7FF; //pinos A0 -> A6
 	  //DÓ
 	  if(alfa==1){
@@ -33,8 +33,8 @@ void nota(void){
 	  }
 	  //FA
 	  if(alfa==8){
-			TIM11->PSC=45;
-			TIM11->ARR=999;
+		  	TIM11->PSC=45;
+	    	TIM11->ARR=999;
 	  }
 	  //SOL
 	  if(alfa==10){
@@ -51,7 +51,7 @@ void nota(void){
 			TIM11->PSC=31;
 			TIM11->ARR=999;
 	  }
-	  
+
 		while((TIM11->SR & 0x1) == 0x0) {}
 			TIM11->SR&=~(0x1);
 }
@@ -59,7 +59,7 @@ void nota(void){
 
 int main(void)
 {
-	int alfa;
+
 
 
 	RCC->AHB1ENR=0X00000087;  //liga o clock
@@ -72,13 +72,13 @@ int main(void)
 
   while (1)
   {
-	  alfa=GPIOA->IDR&0x7FF; //checa se nao tem nenhuma chave pressionada
-	  if(alfa==0){
+	 //checa se nao tem nenhuma chave pressionada
+	  if((GPIOA->IDR&0x7FF)==0){
 		GPIOC->ODR&=~(0X1);//PC0
 		//////////
 	  }
 	   else{
-		GPIOC->ODR=0X01;//PC0
+		GPIOC->ODR^=0X01;//PC0
 		nota();
 	   }
 	  }
