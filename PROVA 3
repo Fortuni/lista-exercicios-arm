@@ -1,0 +1,63 @@
+#include "main.h"
+
+
+//função tempo
+void tempo()//tempo de 1 segundo para ligamento de leds
+{
+	 TIM11->PSC=200;
+	 int lock=0;
+	 if((GPIOB->IDR &0X1)==0X0 && lock==0){//TESTA SE O BOTAO DE PARADA ESTÁ EM NIVEL LOGICO 0 se o botao foi pressionado lock estará em 1 impossibilitando de contar;
+	while((TIM11->SR & 0x1) == 0x0) {}
+		TIM11->SR&=~(0x1);
+		lock=0;
+	 }
+	 if((GPIOB->IDR &0x01)==0X1){
+		 RCC->APB2ENR=~(0X40000);
+		 lock=1;
+	 }
+
+}
+
+int main()
+{
+    RCC->AHB1ENR=0X87;
+    GPIOC->MODER|=0X5555; //LEDS NO PC0-PC7 COMO SAIDAS
+    GPIOA->MODER|=0X28000400;//BOTAO DE DISPARO PA0
+    GPIOB->MODER|=0X000000;//PINO PB0 COMO ENTRADA BOTAO DE DESARME
+	RCC->APB2ENR|=0X40000; //HABILITA O CLOCK DO TIMER 11
+	TIM11->CR1|=0X05;
+	////////50ms
+	TIM11->ARR=999;
+
+while(1){
+	int alfa;
+	  alfa=GPIOB->IDR&0x7F; //pinos B0 -> B6
+	if(alfa==1){
+		//gpioA0 estiver em nivel logico 1
+
+    	GPIOC->ODR|=0X1; //liga p0
+    		tempo();
+    	GPIOC->ODR|=0X2;  // liga p1
+    		tempo();
+    	GPIOC->ODR|=0X4;  // liga p2
+        	tempo();
+        GPIOC->ODR|=0X8;  // liga p3
+        	tempo();
+        GPIOC->ODR|=0X10;  // liga  p4
+        	tempo();
+        GPIOC->ODR|=0X20;  // liga p5
+        	tempo();
+        GPIOC->ODR|=0X40;  // liga p6
+        	tempo();
+        GPIOC->ODR|=0X80;  // liga p7
+        	tempo();
+        GPIOC->ODR&=~(0X80); //desliga p7 //LED DE DISPARO
+        	tempo();
+	}
+	else{
+		GPIOC->ODR^=0X7F; //deixa os leds piscando
+		tempo2();
+	}
+
+}
+}
