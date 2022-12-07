@@ -1,0 +1,362 @@
+//relogio digital, testa se o botao foi pressionado no momento que é pressionado aumenta o min até 59 onde zera sem afetar a hora
+// outro botão aumenta a hora.
+//dispertador: entrara em uma sub função onde vai comparar se o botão de ajuste para horario de dispertador foi ativo com uma chave seletora
+//ou mesmo dois cliques de um botao em que decidira qual sub função entrar;
+
+#include "main.h"
+
+int display1=0, display2=0, display3=0, display4=0,display5=0,display6=0;
+int hD=0, hU=1, mD=0, mU=0;
+int opt=0;
+int t=5;
+int conta_display=0;
+int aux=0, ax=0;
+int teste=0;
+int teste2=0;
+int teste3=0;
+int trava=0;
+int ativa=0;
+int acorda[]={ 0X7C ,0X5C ,0X55 ,0X5E ,0X04 ,0X77};
+int TAB[]={0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x27, 0x7F, 0x6F};
+void tempo2(void){
+	while((TIM11->SR & 0x1) == 0x0) {}
+		TIM11->SR&=~(0x1);
+}
+void tempo(void){
+	while((TIM10->SR & 0x1) == 0x0) {}
+		TIM10->SR&=~(0x1);
+}
+void B_option(){
+
+
+	if((GPIOB->IDR&0X04)==0X04){
+		opt=2;
+	}
+
+	if((GPIOB->IDR&0x04)==0x0){
+    	opt=1;
+	}
+}
+///função botao preste atenção
+void funcao_botao2(){
+	if((GPIOB->IDR&0x01)==0x01 && teste==0){
+		teste=1;
+
+		 if(++mU>9){//min unit 0 a 9
+					mU=0;
+				if(++mD>5){//min dez 0 a 6
+						mD=0;
+
+				}
+		 }
+	}
+	if((GPIOB->IDR&0x02)==0x02 && teste2==0){
+		teste2=1;
+		 if(++hU>9 || (ax ==2 && hU==4)){//testa
+									hU=0;
+								ax=ax+1;
+							if(++hD>2){
+								hD=0;
+		 		 		 		ax=0;
+							}
+		 }
+   }
+
+
+
+
+
+	 if((GPIOB->IDR&0x01)==0x0 && teste==1){
+	    		teste=0;
+
+	    	}
+	   if((GPIOB->IDR&0x2)==0x0 && teste2==1){
+	    		teste2=0;
+
+	    	}
+}
+
+void funcao_botao(){
+	if((GPIOB->IDR&0x01)==0x01 && teste==0){
+		teste=1;
+
+		 if(++display4>9){//min unit 0 a 9
+					display4=0;
+
+				if(++display3>5){//min dez 0 a 6
+						display3=0;
+
+
+				}
+		 }
+	}
+	if((GPIOB->IDR&0x02)==0x02 && teste2==0){
+		teste2=1;
+		 if(++display2>9 || (aux ==2 && display2==4)){//testa
+									display2=0;
+								aux=aux+1;
+							if(++display1>2){
+								display1=0;
+		 		 		 		aux=0;
+							}
+		 }
+   }
+
+
+
+
+
+	 if((GPIOB->IDR&0x01)==0x0 && teste==1){
+	    		teste=0;
+
+	    	}
+	   if((GPIOB->IDR&0x2)==0x0 && teste2==1){
+	    		teste2=0;
+
+	    	}
+}
+
+void disparador(){
+	if(display1 ==hD  &&  display2 ==hU && display3 ==mD && display4 ==mU && trava==0){
+		ativa=1;
+		trava=1;
+	}
+	else{
+		trava=0;
+	}
+}
+void TIM1_UP_TIM10_IRQHandler(){
+
+	 	 if(ativa==0){
+			if(++display6>9){
+				display6=0;
+
+					if(++display5>5){//
+						display5=0;
+
+							 if(++display4>9){//min unit 0 a 9
+								 display4=0;
+
+								 	 if(++display3>5){//min dez 0 a 6
+								 		 display3=0;
+
+								 		 	 if(++display2>9 || (aux ==2 && display2==4)){//testa
+								 		 		 	display2=0;
+								 		 		 	aux=aux+1;
+
+								 		 		 	if(++display1>2){
+								 		 		 		display1=0;
+								 		 		 		aux=0;
+
+
+								 		 		 	}
+								 		 	 }
+								 	 }
+							 }
+					}
+			}
+	 	 }
+	 	 else{
+	 			 if(trava==1){
+	 				 trava=0;
+	 				 //para caso de 60 s alarme
+	 				//display4=display4+1;
+	 			 }
+	 		 }
+
+
+     TIM10->SR &= ~(0x01);    //limpando flag do timer10
+}
+
+
+void TIM1_TRG_COM_TIM11_IRQHandler(){
+    GPIOC->ODR |=0x3FF00;    //desligando todos os displaylays
+    GPIOC->ODR &=~0xFF; //limpando os oito bits
+
+    B_option();
+	 if(opt==1){
+		 //faz a função normal do botão para ajuste de h e min
+		 funcao_botao();
+
+	 }
+	 if(opt==2){
+		 //ajusta hora do dispertador
+		 funcao_botao2();
+	 }
+//////////////////////////////////////////////////////////
+	 if(ativa==0){
+    if(opt==1){
+    switch(conta_display){
+    case 0:
+    		GPIOC->ODR |= TAB[display1];
+    		GPIOC->ODR &= ~0x100;
+    	    disparador();
+    		break;
+    case 1:
+            GPIOC->ODR |= TAB[display2];
+            GPIOC->ODR &= ~0x200;//pc9
+            disparador();
+            break;
+    case 2:
+            GPIOC->ODR |= TAB[display3];
+            GPIOC->ODR &= ~0x400;//pc10
+            disparador();
+            break;
+    case 3:
+            GPIOC->ODR |= TAB[display4];
+            GPIOC->ODR &= ~0x800;//pc11
+            disparador();
+            break;
+    case 4:
+            GPIOC->ODR |= TAB[display5];
+            GPIOC->ODR &= ~0x1000;//pc12
+            disparador();
+            break;
+    case 5:
+            GPIOC->ODR |= TAB[display6];
+            GPIOC->ODR &= ~0x2000;//pc13
+            disparador();
+            break;
+
+    }
+
+    if(++conta_display>5)
+    	conta_display=0;
+    }
+    //////////////////////////////////////////////////////
+    if(opt==2){
+    switch(conta_display){
+    case 0:
+    		GPIOC->ODR |= TAB[hD];
+    		GPIOC->ODR &= ~0x100;
+
+    		break;
+    case 1:
+            GPIOC->ODR |= TAB[hU];
+            GPIOC->ODR &= ~0x200;//pc9
+
+            break;
+    case 2:
+            GPIOC->ODR |= TAB[mD];
+            GPIOC->ODR &= ~0x400;//pc10
+
+            break;
+    case 3:
+            GPIOC->ODR |= TAB[mU];
+            GPIOC->ODR &= ~0x800;//pc11
+
+            break;
+    case 4:
+            GPIOC->ODR |= TAB[0];
+            GPIOC->ODR &= ~0x1000;//pc12
+            break;
+    case 5:
+            GPIOC->ODR |= TAB[0];
+            GPIOC->ODR &= ~0x2000;//pc13
+
+            break;
+
+    }
+    if(++conta_display>5)
+    	conta_display=0;
+
+    }
+}
+    ///////////////////////////////////////////////////
+    ///ativa o dispertador
+if(ativa==1){
+    switch(conta_display){
+      		    case 0:
+      		    		GPIOC->ODR |= acorda[0];
+      		    		GPIOC->ODR &= ~0x100;
+
+      		    		break;
+      		    case 1:
+      		            GPIOC->ODR |= acorda[1];
+      		            GPIOC->ODR &= ~0x200;//pc9
+
+      		            break;
+      		    case 2:
+      		            GPIOC->ODR |= acorda[2];
+      		            GPIOC->ODR &= ~0x400;//pc10
+
+      		            break;
+      		    case 3:
+      		            GPIOC->ODR |= acorda[3];
+      		            GPIOC->ODR &= ~0x800;//pc11
+
+      		            break;
+      		    case 4:
+      		            GPIOC->ODR |= acorda[4];
+      		            GPIOC->ODR &= ~0x1000;//pc12
+      		            break;
+      		    case 5:
+      		            GPIOC->ODR |= acorda[5];
+      		            GPIOC->ODR &= ~0x2000;//pc13
+
+      		            break;
+
+      		    }
+      		    if(++conta_display>5){
+      		    	conta_display=0;
+       	}
+
+
+     TIM11->SR &= ~(0x01);    //limpando flag do timer10
+}
+}
+void config_int_tim11(void){
+    //configurando o timer11 para 2ms 120 hz em cada led
+        RCC->APB2ENR|=0x40000;    //habilita clock timer10
+        TIM11->CR1|=0x01;        //habilita contagem timer10
+        TIM11->PSC=16;
+        TIM11->ARR=999;
+
+        TIM11->DIER|=0x01;        //habilita interrupção timer10
+        // Habilita interrupção no controlador
+        NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 3);//Priority 3
+        NVIC_EnableIRQ(TIM1_TRG_COM_TIM11_IRQn);//
+}
+void config_int_tim10(void){
+    //configurando o timer10 para 1s
+        RCC->APB2ENR|=0x20000;    //habilita clock timer10
+        TIM10->CR1|=0x01;        //habilita contagem timer10
+        //1 seg psc=15999
+        TIM10->PSC=15999;
+        TIM10->ARR=999;
+
+        TIM10->DIER|=0x01;        //habilita interrupção timer10
+        // Habilita interrupção no controlador
+        NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 3);//Priority 3
+        NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);//
+}
+
+
+int main(void)
+{
+
+
+	RCC->AHB1ENR=0x87;
+    GPIOC->MODER|=0x5555555;
+    GPIOA->MODER|=0x28555501;    //pa5 como saída
+    GPIOB->MODER|=0X50000;
+    //configurando o timer10 para gerar 5segundos
+    config_int_tim10();
+    config_int_tim11();
+     while (1) {
+    	 if(ativa==1){
+     	for(int d=0; d<t;d++){
+     		 GPIOA->ODR ^=0X01;
+     		 tempo2();
+
+     	for(int h=0;h<1;h++){
+  			 tempo();}
+     	}
+
+   	}
+     	ativa=0;
+     	display4=display4+1;
+
+    		 //dispara o alarme por tempo determinado }
+}
+}
