@@ -9,11 +9,13 @@ int display1=0, display2=0, display3=0, display4=0,display5=0,display6=0;
 int hD=0, hU=1, mD=0, mU=0;
 int opt=0;
 int t=5;
+int conta=0;
 int conta_display=0;
 int aux=0, ax=0;
 int teste=0;
 int teste2=0;
 int teste3=0;
+int teste4=0;
 int trava=0;
 int ativa=0;
 int acorda[]={ 0X7C ,0X5C ,0X55 ,0X5E ,0X04 ,0X77};
@@ -157,6 +159,10 @@ void TIM1_UP_TIM10_IRQHandler(){
 			}
 	 	 }
 	 	 else{
+	 		 conta++;
+	 		 if(conta>1){
+	 			 conta=0;
+	 		 }
 	 			 if(trava==1){
 	 				 trava=0;
 	 				 //para caso de 60 s alarme
@@ -174,6 +180,7 @@ void TIM1_TRG_COM_TIM11_IRQHandler(){
     GPIOC->ODR &=~0xFF; //limpando os oito bits
 
     B_option();
+    if(ativa==0){
 	 if(opt==1){
 		 //faz a função normal do botão para ajuste de h e min
 		 funcao_botao();
@@ -183,6 +190,7 @@ void TIM1_TRG_COM_TIM11_IRQHandler(){
 		 //ajusta hora do dispertador
 		 funcao_botao2();
 	 }
+    }
 //////////////////////////////////////////////////////////
 	 if(ativa==0){
     if(opt==1){
@@ -336,7 +344,7 @@ int main(void)
 {
 
 
-	RCC->AHB1ENR=0x87;
+ 	RCC->AHB1ENR=0x87;
     GPIOC->MODER|=0x5555555;
     GPIOA->MODER|=0x28555501;    //pa5 como saída
     GPIOB->MODER|=0X50000;
@@ -344,19 +352,26 @@ int main(void)
     config_int_tim10();
     config_int_tim11();
      while (1) {
-    	 if(ativa==1){
-     	for(int d=0; d<t;d++){
+
+    	 if(ativa==1 ){
+
+     		for(int h=0; h<500000;h++){
+     			if( conta==1){
      		 GPIOA->ODR ^=0X01;
-     		 tempo2();
+     			}
+     		 for(int k=0; k<2000;k++){}
+     		if((GPIOA->IDR&0x02)==0x02 && teste4==0){
+     			ativa=0;
+     			teste4=1;
+     			break;
+     		}
 
-     	for(int h=0;h<1;h++){
-  			 tempo();}
-     	}
+     			}
 
-   	}
-     	ativa=0;
-     	display4=display4+1;
-
+     		teste4=0;
+    		ativa=0;
+     		display4=display4+1;
     		 //dispara o alarme por tempo determinado }
+    	 }
 }
 }
